@@ -5,7 +5,7 @@ const mysql = require("../mysql").pool;
 // GET ALL PRODUTS
 router.get("/", (req, res, next) => {
   mysql.getConnection((error, conn) => {
-    const query = "SELECT * FROM produtos";
+    const query = "SELECT * FROM products";
 
     if (error) return res.status(500).send({ error });
 
@@ -36,7 +36,7 @@ router.get("/", (req, res, next) => {
 // INSERT PRODUCT
 router.post("/", (req, res, next) => {
   mysql.getConnection((error, conn) => {
-    const query = "INSERT INTO produtos (name, price) VALUES (?, ?)";
+    const query = "INSERT INTO products (name, price) VALUES (?, ?)";
     const values = [req.body.name, req.body.price];
 
     if (error) return res.status(500).send({ error });
@@ -68,7 +68,7 @@ router.post("/", (req, res, next) => {
 // GET PRODUCT
 router.get("/:product_id", (req, res, next) => {
   mysql.getConnection((error, conn) => {
-    const query = "SELECT * FROM produtos WHERE id_product = ?";
+    const query = "SELECT * FROM products WHERE id_product = ?";
     const value = [req.params.product_id];
 
     if (error) return res.status(500).send({ error });
@@ -103,7 +103,7 @@ router.get("/:product_id", (req, res, next) => {
 router.patch("/", (req, res, next) => {
   mysql.getConnection((error, conn) => {
     const query =
-      "UPDATE produtos SET name = ?, price = ? WHERE id_product = ?";
+      "UPDATE products SET name = ?, price = ? WHERE id_product = ?";
     const values = [req.body.name, req.body.price, req.body.id_product];
 
     if (error) return res.status(500).send({ error });
@@ -135,7 +135,7 @@ router.patch("/", (req, res, next) => {
 // DELETE PRODUCT
 router.delete("/", (req, res, next) => {
   mysql.getConnection((error, conn) => {
-    const query = "DELETE FROM produtos WHERE id_product = ?";
+    const query = "DELETE FROM products WHERE id_product = ?";
     const value = [req.body.id_product];
 
     if (error) return res.status(500).send({ error });
