@@ -6,6 +6,7 @@ const productsRouter = require("./routes/products");
 const ordersRouter = require("./routes/order");
 
 app.use(morgan("dev"));
+app.use("/uploads", express.static("uploads"));
 app.use(express.urlencoded({ extended: false })); // only simple data
 app.use(express.json()); // only json data
 
