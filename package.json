@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Estudo de REST API com nodejs",
   "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
   "author": "Erick <santoserick9@gmail.com>",
   "license": "MIT",
   "dependencies": {
