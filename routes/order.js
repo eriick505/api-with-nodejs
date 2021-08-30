@@ -19,7 +19,7 @@ router.get("/", (req, res, next) => {
         orders: results.map((order) => ({
           id_order: order.id_order,
           id_product: order.id_product,
-          quantitty: order.quantitty,
+          quantity: order.quantity,
           request: {
             type: "GET",
             description: "Get order details",
