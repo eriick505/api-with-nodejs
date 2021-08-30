@@ -14,7 +14,21 @@ router.get("/", (req, res, next) => {
 
       if (error) return res.status(500).send({ error, response: null });
 
-      return res.status(200).send({ results });
+      const response = {
+        quantity: results.length,
+        products: results.map((product) => ({
+          id_product: product.id_product,
+          name: product.name,
+          price: product.price,
+          request: {
+            type: "GET",
+            description: "Get product details",
+            url: `http://localhost:3000/products/${product.id_product}`,
+          },
+        })),
+      };
+
+      return res.status(200).send(response);
     });
   });
 });
@@ -32,10 +46,21 @@ router.post("/", (req, res, next) => {
 
       if (error) return res.status(500).send({ error, response: null });
 
-      res.status(201).send({
+      const response = {
         message: "Successfully created product",
-        id_product: results.insertId,
-      });
+        product: {
+          id_product: results.id_product,
+          name: results.name,
+          price: results.price,
+          request: {
+            type: "GET",
+            description: "Return all Products",
+            url: `http://localhost:3000/products`,
+          },
+        },
+      };
+
+      res.status(201).send(response);
     });
   });
 });
@@ -53,7 +78,23 @@ router.get("/:product_id", (req, res, next) => {
 
       if (error) return res.status(500).send({ error, response: null });
 
-      return res.status(200).send({ results });
+      if (results.length === 0)
+        return res.status(404).send({ message: "Product Not Found" });
+
+      const response = {
+        product: {
+          id_product: results[0].id_product,
+          name: results[0].name,
+          price: results[0].price,
+          request: {
+            type: "GET",
+            description: "Return all Products",
+            url: `http://localhost:3000/products`,
+          },
+        },
+      };
+
+      return res.status(200).send(response);
     });
   });
 });
@@ -72,9 +113,21 @@ router.patch("/", (req, res, next) => {
 
       if (error) return res.status(500).send({ error, response: null });
 
-      res.status(202).send({
+      const response = {
         message: "Successfully update product",
-      });
+        product: {
+          id_product: req.body.id_product,
+          name: req.body.name,
+          price: req.body.price,
+          request: {
+            type: "GET",
+            description: "Get product details",
+            url: `http://localhost:3000/products/${req.body.id_product}`,
+          },
+        },
+      };
+
+      res.status(202).send(response);
     });
   });
 });
@@ -92,9 +145,20 @@ router.delete("/", (req, res, next) => {
 
       if (error) return res.status(500).send({ error, response: null });
 
-      res.status(202).send({
+      const response = {
         message: "Successfully deleted product",
-      });
+        request: {
+          type: "POST",
+          description: "Create new Product",
+          url: `http://localhost:3000/products`,
+          bodyRequest: {
+            name: "String",
+            price: "Number",
+          },
+        },
+      };
+
+      res.status(202).send(response);
     });
   });
 });
