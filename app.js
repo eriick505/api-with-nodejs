@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const productsRouter = require("./routes/products");
-const ordersRouter = require("./routes/products");
+const ordersRouter = require("./routes/order");
 
 app.use("/products", productsRouter);
 app.use("/orders", ordersRouter);
