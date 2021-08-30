@@ -10,8 +10,14 @@ router.get("/", (req, res, next) => {
 
 // INSERT ORDER
 router.post("/", (req, res, next) => {
+  const order = {
+    id_product: req.body.id_product,
+    quantity: req.body.quantity,
+  };
+
   res.status(201).send({
     message: "POST: Create new order",
+    newOrder: order,
   });
 });
 
