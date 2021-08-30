@@ -1,6 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("../mysql").pool;
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./uploads/");
+  },
+  filename: function (req, file, callback) {
+    const data = new Date().toISOString().replace(/:/g, "-") + "-";
+    callback(null, data + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, callback) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter,
+});
 
 // GET ALL PRODUTS
 router.get("/", (req, res, next) => {
@@ -20,6 +47,7 @@ router.get("/", (req, res, next) => {
           id_product: product.id_product,
           name: product.name,
           price: product.price,
+          image_product: product.image_product,
           request: {
             type: "GET",
             description: "Get product details",
@@ -34,10 +62,13 @@ router.get("/", (req, res, next) => {
 });
 
 // INSERT PRODUCT
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("product_image"), (req, res, next) => {
+  console.log(req.file);
+
   mysql.getConnection((error, conn) => {
-    const query = "INSERT INTO products (name, price) VALUES (?, ?)";
-    const values = [req.body.name, req.body.price];
+    const query =
+      "INSERT INTO products (name, price, image_product) VALUES (?, ?, ?)";
+    const values = [req.body.name, req.body.price, req.file.path];
 
     if (error) return res.status(500).send({ error });
 
@@ -50,8 +81,9 @@ router.post("/", (req, res, next) => {
         message: "Successfully created product",
         product: {
           id_product: results.id_product,
-          name: results.name,
-          price: results.price,
+          name: req.body.name,
+          price: req.body.price,
+          image_product: req.file.path,
           request: {
             type: "GET",
             description: "Return all Products",
@@ -86,6 +118,7 @@ router.get("/:product_id", (req, res, next) => {
           id_product: results[0].id_product,
           name: results[0].name,
           price: results[0].price,
+          image_product: results[0].image_product,
           request: {
             type: "GET",
             description: "Return all Products",
