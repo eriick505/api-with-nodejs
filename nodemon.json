@@ -4,6 +4,8 @@
     "MYSQL_PASSWORD": "",
     "MYSQL_DATABASE": "api_node_crud",
     "MYSQL_HOST": "localhost",
-    "MYSQL_PORT": 3306
+    "MYSQL_PORT": 3306,
+
+    "JWT_KEY": "6{hG=KPlj#OS&Z?#k2ijw*XI4Qw%)K&-UkH9`EJO[cRsx7BrB#4IX|EM0!;H,e"
   }
 }
