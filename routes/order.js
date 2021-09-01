@@ -72,7 +72,7 @@ router.post("/", (req, res, next) => {
         const response = {
           message: "Successfully created order",
           order: {
-            id_order: results.id_order,
+            id_order: results.insertId,
             id_product: req.body.id_product,
             quantity: req.body.quantity,
             request: {

@@ -4,6 +4,7 @@ const morgan = require("morgan");
 
 const productsRouter = require("./routes/products");
 const ordersRouter = require("./routes/order");
+const usersRouter = require("./routes/users");
 
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use("/products", productsRouter);
 app.use("/orders", ordersRouter);
+app.use("/users", usersRouter);
 
 // Access here when not routes are found
 app.use((req, res, next) => {

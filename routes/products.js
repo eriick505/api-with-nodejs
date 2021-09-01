@@ -80,7 +80,7 @@ router.post("/", upload.single("product_image"), (req, res, next) => {
       const response = {
         message: "Successfully created product",
         product: {
-          id_product: results.id_product,
+          id_product: results.insertId,
           name: req.body.name,
           price: req.body.price,
           image_product: req.file.path,
