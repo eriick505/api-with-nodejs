@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("../mysql").pool;
 const multer = require("multer");
+const login = require("../middleware/login");
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -62,40 +63,45 @@ router.get("/", (req, res, next) => {
 });
 
 // INSERT PRODUCT
-router.post("/", upload.single("product_image"), (req, res, next) => {
-  console.log(req.file);
+router.post(
+  "/",
+  login.required,
+  upload.single("product_image"),
+  (req, res, next) => {
+    console.log(req.user);
 
-  mysql.getConnection((error, conn) => {
-    const query =
-      "INSERT INTO products (name, price, image_product) VALUES (?, ?, ?)";
-    const values = [req.body.name, req.body.price, req.file.path];
+    mysql.getConnection((error, conn) => {
+      const query =
+        "INSERT INTO products (name, price, image_product) VALUES (?, ?, ?)";
+      const values = [req.body.name, req.body.price, req.file.path];
 
-    if (error) return res.status(500).send({ error });
+      if (error) return res.status(500).send({ error });
 
-    conn.query(query, values, (error, results, field) => {
-      conn.release();
+      conn.query(query, values, (error, results, field) => {
+        conn.release();
 
-      if (error) return res.status(500).send({ error, response: null });
+        if (error) return res.status(500).send({ error, response: null });
 
-      const response = {
-        message: "Successfully created product",
-        product: {
-          id_product: results.insertId,
-          name: req.body.name,
-          price: req.body.price,
-          image_product: req.file.path,
-          request: {
-            type: "GET",
-            description: "Return all Products",
-            url: `http://localhost:3000/products`,
+        const response = {
+          message: "Successfully created product",
+          product: {
+            id_product: results.insertId,
+            name: req.body.name,
+            price: req.body.price,
+            image_product: req.file.path,
+            request: {
+              type: "GET",
+              description: "Return all Products",
+              url: `http://localhost:3000/products`,
+            },
           },
-        },
-      };
+        };
 
-      res.status(201).send(response);
+        res.status(201).send(response);
+      });
     });
-  });
-});
+  }
+);
 
 // GET PRODUCT
 router.get("/:product_id", (req, res, next) => {
@@ -133,7 +139,7 @@ router.get("/:product_id", (req, res, next) => {
 });
 
 // UPDATE PRODUCT
-router.patch("/", (req, res, next) => {
+router.patch("/", login.required, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     const query =
       "UPDATE products SET name = ?, price = ? WHERE id_product = ?";
@@ -166,7 +172,7 @@ router.patch("/", (req, res, next) => {
 });
 
 // DELETE PRODUCT
-router.delete("/", (req, res, next) => {
+router.delete("/", login.required, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     const query = "DELETE FROM products WHERE id_product = ?";
     const value = [req.body.id_product];
